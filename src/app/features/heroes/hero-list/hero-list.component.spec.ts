@@ -74,8 +74,52 @@ describe('HeroListComponent', () => {
     expect(heroService.searchByName).toHaveBeenCalledWith('super');
   });
 
+   it('should render hero card in the template', () => {
+  fixture.detectChanges();
+
+  const cards = fixture.nativeElement.querySelectorAll('.hero-card');
+  expect(cards.length).toBe(1);
+  expect(cards[0].textContent).toContain('Superman');
+});
+
   it('should navigate to add hero', () => {
     component.onAdd();
     expect(router.navigate).toHaveBeenCalledWith(['/heroes/new']);
   });
+
+ it('should call onAdd when add button is clicked', () => {
+  const spy = vi.spyOn(component, 'onAdd');
+
+  const button = fixture.nativeElement.querySelector('.add-button');
+  button.click();
+
+  expect(spy).toHaveBeenCalled();
+});
+
+it('should trigger search on input', () => {
+  heroService.searchByName.mockReturnValue(of([]));
+  const spy = vi.spyOn(component, 'onSearch');
+
+  const input: HTMLInputElement =
+    fixture.nativeElement.querySelector('input[matInput]');
+
+  input.value = 'bat';
+  input.dispatchEvent(new Event('input'));
+
+  expect(spy).toHaveBeenCalled();
+});
+
+it('should call onEdit when edit button is clicked', () => {
+  const spy = vi.spyOn(component, 'onEdit');
+
+  const editBtn = fixture.nativeElement.querySelector(
+    'button[aria-label="Editar"]'
+  );
+
+  editBtn.click();
+
+  expect(spy).toHaveBeenCalled();
+});
+
+
 });

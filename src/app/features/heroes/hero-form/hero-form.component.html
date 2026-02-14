@@ -66,6 +66,16 @@
             placeholder="Ej: Krypton, Smallville">
         </mat-form-field>
 
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>URL de Imagen (Opcional)</mat-label>
+          <input 
+            matInput 
+            formControlName="imageUrl" 
+            type="url"
+            placeholder="https://ejemplo.com/imagen.jpg">
+          <mat-hint>Ingresá la URL de una imagen del personaje</mat-hint>
+        </mat-form-field>
+        
         <div class="form-actions">
           <button mat-button type="button" (click)="onCancel()">
             Cancelar

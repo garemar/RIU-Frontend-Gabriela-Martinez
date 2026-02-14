@@ -5,16 +5,17 @@ Aplicación SPA para gestión de súper héroes desarrollada con Angular 21 y Ma
 ## 🚀 Características
 
 - ✅ CRUD completo de súper héroes
-- ✅ Lista paginada con diseño de cards
+- ✅ Lista paginada con diseño de cards responsive
 - ✅ Búsqueda por nombre en tiempo real
 - ✅ Vista detallada de cada personaje con estadísticas de poder
-- ✅ Formulario de creación/edición con validaciones
-- ✅ Confirmación de eliminación con diálogo modal
-- ✅ Integración con API pública de súper héroes
+- ✅ Formulario de creación/edición con validaciones y carga de imágenes
+- ✅ Confirmación de eliminación con diálogo modal personalizado
+- ✅ Integración con API pública de súper héroes (563 personajes)
 - ✅ Directiva custom para transformar texto a mayúsculas
-- ✅ Interceptor de loading
-- ✅ Tests unitarios con Vitest
+- ✅ Interceptor de loading global
+- ✅ Tests unitarios con 83%+ coverage
 - ✅ Diseño responsivo con tema oscuro
+- ✅ Dockerizado con nginx
 
 ## 🛠️ Tecnologías
 
@@ -23,13 +24,16 @@ Aplicación SPA para gestión de súper héroes desarrollada con Angular 21 y Ma
 - **RxJS** - Programación reactiva
 - **TypeScript** - Tipado estático
 - **Vitest** - Testing framework
-- **SCSS** - Estilos
+- **SCSS** - Estilos personalizados
+- **Docker** - Containerización
+- **Nginx** - Servidor web para producción
 - **API Externa** - [SuperHero API](https://akabab.github.io/superhero-api)
 
 ## 📋 Prerequisitos
 
 - Node.js v20.19+ o v22.12+
 - npm v10+
+- Docker (opcional, para deployment)
 
 ## 🔧 Instalación
 
@@ -52,35 +56,62 @@ La aplicación estará disponible en `http://localhost:4200`
 ```bash
 # Desarrollo
 npm start              # Inicia servidor de desarrollo
+npm run watch          # Build en modo watch
 
 # Build
 npm run build          # Compila para producción
 
 # Testing
-npm test              # Ejecuta tests unitarios
-npm run test:coverage # Tests con coverage
+npm test              # Ejecuta tests en modo watch
+npm run test:ci       # Ejecuta tests con coverage (CI/CD)
 
-# Linting
-npm run lint          # Verifica código
+# Docker
+docker-compose build  # Construye imagen Docker
+docker-compose up     # Inicia contenedor (puerto 8080)
 ```
+
+## 🐳 Docker
+
+### Desarrollo Local con Docker
+
+```bash
+# Construir y ejecutar
+docker-compose up --build
+
+# Acceder a la aplicación
+http://localhost:8080
+```
+
+### Dockerfile Multi-Stage
+
+La aplicación usa un build multi-stage optimizado:
+
+1. **Stage 1**: Build de Angular con Node.js
+2. **Stage 2**: Servir con Nginx Alpine
 
 ## 🏗️ Estructura del Proyecto
 
 ```
 src/app/
-├── core/                    # Módulos core
-│   ├── models/             # Interfaces y tipos
-│   ├── services/           # Servicios (Hero, Loading)
-│   └── interceptors/       # HTTP Interceptors
-├── features/               # Módulos de funcionalidades
+├── core/                           # Módulos core
+│   ├── models/                     # Interfaces y tipos
+│   │   └── hero.interface.ts
+│   ├── services/                   # Servicios
+│   │   ├── hero.service.ts        # CRUD de héroes
+│   │   └── loading.service.ts     # Estado de carga
+│   └── interceptors/
+│       └── loading.interceptor.ts # Interceptor HTTP
+├── features/                      # Funcionalidades
 │   └── heroes/
-│       ├── hero-list/      # Lista de héroes
-│       ├── hero-detail/    # Detalle del héroe
-│       └── hero-form/      # Formulario crear/editar
-├── shared/                 # Componentes y utilidades compartidas
-│   ├── components/         # Componentes reutilizables
-│   └── directives/         # Directivas custom
-└── app.routes.ts          # Configuración de rutas
+│       ├── hero-list/             # Lista de héroes
+│       ├── hero-detail/           # Detalle del héroe
+│       └── hero-form/             # Formulario crear/editar
+├── shared/                        # Componentes compartidos
+│   ├── components/
+│   │   └── confirm-dialog/        # Modal de confirmación
+│   └── directives/
+│       └── uppercase-input/       # Directiva uppercase
+└── app.routes.ts                  # Configuración de rutas
 ```
 
 ## ✨ Funcionalidades Principales
@@ -89,60 +120,92 @@ src/app/
 
 - **Listar**: Grid de cards con paginación (12/24/48/96 items)
 - **Buscar**: Filtrado en tiempo real por nombre
-- **Ver Detalle**: Información completa + estadísticas de poder
-- **Crear**: Formulario con validaciones
-- **Editar**: Modificación de datos biográficos y laborales
-- **Eliminar**: Con confirmación modal
+- **Ver Detalle**: Información completa + estadísticas visuales de poder
+- **Crear**: Formulario con validaciones + carga de URL de imagen
+- **Editar**: Modificación de datos biográficos, laborales e imagen
+- **Eliminar**: Con confirmación modal estilizada
 
 ### Características Técnicas
 
 - **Programación Reactiva**: Uso de Observables y Signals
+- **Standalone Components**: Arquitectura modular sin NgModules
 - **Lazy Loading**: Optimización de carga
 - **Directiva Custom**: Transformación automática a mayúsculas en inputs
-- **Interceptor**: Indicador de carga global
-- **Validaciones**: Formularios reactivos con validación
-- **Confirmaciones**: Diálogos modales para acciones destructivas
+- **Interceptor HTTP**: Indicador de carga global automático
+- **Validaciones**: Formularios reactivos con validación en tiempo real
+- **Confirmaciones**: Diálogos modales Material para acciones destructivas
+- **API Integration**: Carga inicial de 563 héroes + gestión local en memoria
 
 ## 🧪 Testing
 
-Tests implementados para:
+**Coverage actual: 83.49%** ✅ (supera el objetivo de 80%)
 
-- ✅ HeroService (8 tests)
-- ✅ HeroListComponent (7 tests)
+Tests implementados:
+
+- ✅ HeroService - 8 tests (92.3% coverage)
+- ✅ HeroListComponent - 4 tests (75.6% coverage)
+- ✅ UppercaseInputDirective - 1 test (100% coverage)
+- ✅ ConfirmDialogComponent - 3 tests (92.85% coverage)
 
 ```bash
+# Ejecutar tests
 npm test
+
+# Tests con coverage
+npm run test:ci
 ```
 
-Coverage objetivo: 80%+
+Ver reporte detallado: `coverage/index.html` (generado después de `npm run test:ci`)
 
 ## 🎨 Diseño
 
-- Tema oscuro con gradiente violeta
-- Paleta de colores: Deep Purple (#9c27b0) y Grey
-- Componentes Material Design personalizados
-- Diseño responsivo adaptable
+- **Tema oscuro** con gradiente violeta (`#0d0d0d` → `#1a0d2e`)
+- **Paleta principal**: Deep Purple (#9c27b0) y Grey (#b0b0b0)
+- **Componentes Material** personalizados
+- **Diseño responsivo** adaptable a mobile/tablet/desktop
+- **Cards con hover effects** y animaciones sutiles
+- **Loading spinner** centralizado
 
-## 📝 Notas de Desarrollo
+## 📝 Decisiones Técnicas
 
-### Decisiones Técnicas
+### Arquitectura
 
 - **Sin provideAnimations**: Deprecado en Angular 20.2+, se usa CSS nativo
-- **Modelo híbrido**: API externa + gestión local en memoria
+- **Modelo híbrido**: API externa (read) + gestión local en memoria (CRUD)
 - **Signals**: Uso de la nueva API de reactividad de Angular
 - **Standalone Components**: Arquitectura modular sin NgModules
 
-### Mejoras Futuras
+### Modelo de Datos
 
-- Filtros por universo/publisher
-- Edición de estadísticas de poder
-- Persistencia con LocalStorage
-- Más tests (objetivo 100% coverage)
+- Carga inicial desde SuperHero API (563 héroes)
+- Todos los héroes son editables/eliminables una vez cargados
+- Nuevos héroes se crean con ID timestamp
+- Datos en memoria (no persisten al recargar - según especificación del challenge)
+
+### Testing
+
+- **Vitest** como framework (incluido en Angular 21)
+- Tests unitarios para servicios y componentes críticos
+- Mocks de HttpClient con `provideHttpClientTesting()`
+- Coverage automático con v8
+
+## 🚀 Mejoras Futuras
+
+- [ ] Filtros avanzados por universo/publisher/alignment
+- [ ] Edición de estadísticas de poder con sliders
+- [ ] Persistencia con LocalStorage/IndexedDB
+- [ ] Animaciones de entrada/salida de elementos
+- [ ] Tests E2E con Playwright
+- [ ] PWA con service workers
+- [ ] Infinite scroll en lugar de paginación
 
 ## 👤 Autor
 
 **Gabriela Martinez**
 
 - GitHub: [@garemar](https://github.com/garemar)
+- Repositorio: [RIU-Frontend-Gabriela-Martinez](https://github.com/garemar/RIU-Frontend-Gabriela-Martinez)
 
 ---
+
+**Stack**: Angular 21 • TypeScript • RxJS • Material Design • Vitest • Docker • Nginx

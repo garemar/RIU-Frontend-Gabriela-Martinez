@@ -47,4 +47,5 @@ export interface HeroCreate {
   publisher?: string;
   occupation?: string;
   firstAppearance?: string;
+  imageUrl?: string;
 }

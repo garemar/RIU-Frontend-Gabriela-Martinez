@@ -57,7 +57,9 @@ export class HeroService {
     );
   }
 
-  create(heroData: HeroCreate): Observable<Hero> {
+create(heroData: HeroCreate): Observable<Hero> {
+    const imageUrl = heroData.imageUrl || 'https://via.placeholder.com/256x384/9c27b0/ffffff?text=Hero';
+    
     const newHero: Hero = {
       id: Date.now(),
       name: heroData.name,
@@ -95,10 +97,10 @@ export class HeroService {
         relatives: '-'
       },
       images: {
-        xs: 'https://via.placeholder.com/32x48/9c27b0/ffffff?text=Hero',
-        sm: 'https://via.placeholder.com/64x96/9c27b0/ffffff?text=Hero',
-        md: 'https://via.placeholder.com/128x192/9c27b0/ffffff?text=Hero',
-        lg: 'https://via.placeholder.com/256x384/9c27b0/ffffff?text=Hero'
+        xs: imageUrl,
+        sm: imageUrl,
+        md: imageUrl,
+        lg: imageUrl
       }
     };
 

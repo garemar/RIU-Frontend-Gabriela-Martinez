@@ -5,17 +5,24 @@ import { Directive, HostListener, ElementRef } from '@angular/core';
   standalone: true
 })
 export class UppercaseInputDirective {
-  constructor(private el: ElementRef) {}
+  constructor(private el: ElementRef<HTMLInputElement>) {}
 
   @HostListener('input', ['$event'])
   onInput(event: Event): void {
     const input = event.target as HTMLInputElement;
+
     const start = input.selectionStart;
     const end = input.selectionEnd;
-    
-    input.value = input.value.toUpperCase();
-    input.setSelectionRange(start, end);
-    
-    input.dispatchEvent(new Event('input'));
+
+    const upper = input.value.toUpperCase();
+
+    // 🔒 Guarda anti-loop
+    if (input.value !== upper) {
+      input.value = upper;
+
+      if (start !== null && end !== null) {
+        input.setSelectionRange(start, end);
+      }
+    }
   }
 }

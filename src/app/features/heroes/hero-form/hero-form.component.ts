@@ -47,7 +47,8 @@ export class HeroFormComponent implements OnInit {
       publisher: [''],
       occupation: [''],
       firstAppearance: [''],
-      placeOfBirth: ['']
+      placeOfBirth: [''],
+      imageUrl: ['']
     });
   }
 
@@ -72,7 +73,8 @@ export class HeroFormComponent implements OnInit {
             publisher: hero.biography.publisher,
             occupation: hero.work.occupation,
             firstAppearance: hero.biography.firstAppearance,
-            placeOfBirth: hero.biography.placeOfBirth
+            placeOfBirth: hero.biography.placeOfBirth,
+            imageUrl: hero.images.md
           });
         }
         this.loadingService.hide();
@@ -93,6 +95,8 @@ export class HeroFormComponent implements OnInit {
     this.loadingService.show();
 
     if (this.isEditMode && this.heroId) {
+      const imageUrl = this.heroForm.value.imageUrl || 'https://via.placeholder.com/256x384/9c27b0/ffffff?text=Hero';
+      
       const updatedData = {
         name: this.heroForm.value.name,
         biography: {
@@ -107,6 +111,12 @@ export class HeroFormComponent implements OnInit {
         work: {
           occupation: this.heroForm.value.occupation || '-',
           base: '-'
+        },
+        images: {
+          xs: imageUrl,
+          sm: imageUrl,
+          md: imageUrl,
+          lg: imageUrl
         }
       };
       
@@ -122,7 +132,8 @@ export class HeroFormComponent implements OnInit {
         name: this.heroForm.value.name,
         publisher: this.heroForm.value.publisher,
         occupation: this.heroForm.value.occupation,
-        firstAppearance: this.heroForm.value.firstAppearance
+        firstAppearance: this.heroForm.value.firstAppearance,
+        imageUrl: this.heroForm.value.imageUrl
       };
       
       this.heroService.create(createData).subscribe({
