@@ -1,0 +1,64 @@
+<div class="form-container">
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>
+        {{ isEditMode ? 'Editar Héroe' : 'Nuevo Héroe' }}
+      </mat-card-title>
+    </mat-card-header>
+
+    <mat-card-content>
+      @if (loading$ | async) {
+        <div class="loading-overlay">
+          <mat-spinner></mat-spinner>
+        </div>
+      }
+
+      <form [formGroup]="heroForm" (ngSubmit)="onSubmit()">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Nombre</mat-label>
+          <input 
+            matInput 
+            formControlName="name" 
+            appUppercaseInput
+            placeholder="Ej: SUPERMAN">
+          @if (heroForm.get('name')?.invalid && heroForm.get('name')?.touched) {
+            <mat-error>{{ getErrorMessage('name') }}</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Publisher (Opcional)</mat-label>
+          <input 
+            matInput 
+            formControlName="publisher" 
+            placeholder="Ej: DC Comics, Marvel Comics">
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Ocupación (Opcional)</mat-label>
+          <input 
+            matInput 
+            formControlName="occupation" 
+            placeholder="Ej: Reportero, Científico">
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Primera Aparición (Opcional)</mat-label>
+          <input 
+            matInput 
+            formControlName="firstAppearance" 
+            placeholder="Ej: Action Comics #1">
+        </mat-form-field>
+
+        <div class="form-actions">
+          <button mat-button type="button" (click)="onCancel()">
+            Cancelar
+          </button>
+          <button mat-raised-button color="primary" type="submit">
+            {{ isEditMode ? 'Actualizar' : 'Crear' }}
+          </button>
+        </div>
+      </form>
+    </mat-card-content>
+  </mat-card>
+</div>
