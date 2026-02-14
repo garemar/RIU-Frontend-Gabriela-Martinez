@@ -2,7 +2,7 @@
   <mat-card>
     <mat-card-header>
       <mat-card-title>
-        {{ isEditMode ? 'Editar Héroe' : 'Nuevo Héroe' }}
+        {{ isEditMode ? 'Editar Personaje' : 'Nuevo Personaje' }}
       </mat-card-title>
     </mat-card-header>
 
@@ -15,7 +15,7 @@
 
       <form [formGroup]="heroForm" (ngSubmit)="onSubmit()">
         <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Nombre</mat-label>
+          <mat-label>Nombre del Personaje</mat-label>
           <input 
             matInput 
             formControlName="name" 
@@ -24,6 +24,14 @@
           @if (heroForm.get('name')?.invalid && heroForm.get('name')?.touched) {
             <mat-error>{{ getErrorMessage('name') }}</mat-error>
           }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Nombre Real (Opcional)</mat-label>
+          <input 
+            matInput 
+            formControlName="fullName" 
+            placeholder="Ej: Clark Kent">
         </mat-form-field>
 
         <mat-form-field appearance="outline" class="full-width">
@@ -47,7 +55,15 @@
           <input 
             matInput 
             formControlName="firstAppearance" 
-            placeholder="Ej: Action Comics #1">
+            placeholder="Ej: Action Comics #1 (1938)">
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Lugar de Nacimiento (Opcional)</mat-label>
+          <input 
+            matInput 
+            formControlName="placeOfBirth" 
+            placeholder="Ej: Krypton, Smallville">
         </mat-form-field>
 
         <div class="form-actions">

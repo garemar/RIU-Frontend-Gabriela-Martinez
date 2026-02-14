@@ -7,9 +7,9 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { HeroService } from '../../core/services/hero.service';
-import { LoadingService } from '../../core/services/loading.service';
-import { UppercaseInputDirective } from '../../shared/directives/uppercase-input.directive';
+import { HeroService } from '../../../core/services/hero.service';
+import { LoadingService } from '../../../core/services/loading.service';
+import { UppercaseInputDirective } from '../../../shared/directives/uppercase-input.directive';
 
 @Component({
   selector: 'app-hero-form',
@@ -43,9 +43,11 @@ export class HeroFormComponent implements OnInit {
     this.loading$ = this.loadingService.loading$;
     this.heroForm = this.fb.group({
       name: ['', [Validators.required, Validators.minLength(3)]],
+      fullName: [''],
       publisher: [''],
       occupation: [''],
-      firstAppearance: ['']
+      firstAppearance: [''],
+      placeOfBirth: ['']
     });
   }
 
@@ -63,16 +65,15 @@ export class HeroFormComponent implements OnInit {
     this.loadingService.show();
     this.heroService.getById(id).subscribe({
       next: (hero) => {
-        if (hero && hero.biography.publisher === 'Custom') {
+        if (hero) {
           this.heroForm.patchValue({
             name: hero.name,
+            fullName: hero.biography.fullName,
             publisher: hero.biography.publisher,
             occupation: hero.work.occupation,
-            firstAppearance: hero.biography.firstAppearance
+            firstAppearance: hero.biography.firstAppearance,
+            placeOfBirth: hero.biography.placeOfBirth
           });
-        } else {
-          alert('Solo puedes editar héroes personalizados');
-          this.router.navigate(['/heroes']);
         }
         this.loadingService.hide();
       },
@@ -95,13 +96,16 @@ export class HeroFormComponent implements OnInit {
       const updatedData = {
         name: this.heroForm.value.name,
         biography: {
-          ...({} as any),
-          fullName: this.heroForm.value.name,
-          publisher: this.heroForm.value.publisher || 'Custom',
-          firstAppearance: this.heroForm.value.firstAppearance
+          fullName: this.heroForm.value.fullName || this.heroForm.value.name,
+          publisher: this.heroForm.value.publisher || 'Unknown',
+          firstAppearance: this.heroForm.value.firstAppearance || '-',
+          placeOfBirth: this.heroForm.value.placeOfBirth || '-',
+          alterEgos: 'No alter egos found.',
+          aliases: [],
+          alignment: 'good'
         },
         work: {
-          occupation: this.heroForm.value.occupation,
+          occupation: this.heroForm.value.occupation || '-',
           base: '-'
         }
       };
@@ -114,7 +118,14 @@ export class HeroFormComponent implements OnInit {
         error: () => this.loadingService.hide()
       });
     } else {
-      this.heroService.create(this.heroForm.value).subscribe({
+      const createData = {
+        name: this.heroForm.value.name,
+        publisher: this.heroForm.value.publisher,
+        occupation: this.heroForm.value.occupation,
+        firstAppearance: this.heroForm.value.firstAppearance
+      };
+      
+      this.heroService.create(createData).subscribe({
         next: () => {
           this.loadingService.hide();
           this.router.navigate(['/heroes']);

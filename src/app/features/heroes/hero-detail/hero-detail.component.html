@@ -1,0 +1,132 @@
+<div class="detail-container">
+  @if (loading$ | async) {
+    <div class="loading">
+      <mat-spinner></mat-spinner>
+    </div>
+  }
+
+  @if (hero && !(loading$ | async)) {
+    <mat-card class="hero-card">
+      <div class="hero-header">
+        <button mat-icon-button (click)="onBack()" class="back-button">
+          <mat-icon>arrow_back</mat-icon>
+        </button>
+        <h1>{{ hero.name }}</h1>
+        <div class="actions">
+          <button mat-icon-button color="primary" (click)="onEdit()" aria-label="Editar">
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button mat-icon-button color="warn" (click)="onDelete()" aria-label="Eliminar">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </div>
+      </div>
+
+      <div class="hero-content">
+        <div class="hero-image-section">
+          <img [src]="hero.images.md" [alt]="hero.name" class="hero-image">
+          <mat-chip-set>
+            <mat-chip [highlighted]="hero.biography.alignment === 'good'" 
+                      [class.good]="hero.biography.alignment === 'good'"
+                      [class.bad]="hero.biography.alignment === 'bad'">
+              {{ hero.biography.alignment === 'good' ? 'Héroe' : 'Villano' }}
+            </mat-chip>
+            <mat-chip>{{ hero.biography.publisher }}</mat-chip>
+          </mat-chip-set>
+        </div>
+
+        <div class="hero-info">
+          <div class="info-section">
+            <h2>Biografía</h2>
+            <div class="info-item">
+              <strong>Nombre Real:</strong> {{ hero.biography.fullName }}
+            </div>
+            <div class="info-item">
+              <strong>Alter Egos:</strong> {{ hero.biography.alterEgos }}
+            </div>
+            <div class="info-item">
+              <strong>Primera Aparición:</strong> {{ hero.biography.firstAppearance }}
+            </div>
+            <div class="info-item">
+              <strong>Lugar de Nacimiento:</strong> {{ hero.biography.placeOfBirth }}
+            </div>
+          </div>
+
+          <div class="info-section">
+            <h2>Apariencia</h2>
+            <div class="info-item">
+              <strong>Género:</strong> {{ hero.appearance.gender }}
+            </div>
+            <div class="info-item">
+              <strong>Raza:</strong> {{ hero.appearance.race || '-' }}
+            </div>
+            <div class="info-item">
+              <strong>Altura:</strong> {{ hero.appearance.height[1] || hero.appearance.height[0] }}
+            </div>
+            <div class="info-item">
+              <strong>Peso:</strong> {{ hero.appearance.weight[1] || hero.appearance.weight[0] }}
+            </div>
+          </div>
+
+          <div class="info-section">
+            <h2>Trabajo</h2>
+            <div class="info-item">
+              <strong>Ocupación:</strong> {{ hero.work.occupation }}
+            </div>
+            <div class="info-item">
+              <strong>Base:</strong> {{ hero.work.base }}
+            </div>
+          </div>
+
+          <div class="info-section">
+            <h2>Estadísticas de Poder</h2>
+            <div class="stats">
+              <div class="stat">
+                <span>Inteligencia</span>
+                <div class="stat-bar">
+                  <div class="stat-fill" [style.width.%]="hero.powerstats.intelligence"></div>
+                </div>
+                <span>{{ hero.powerstats.intelligence }}</span>
+              </div>
+              <div class="stat">
+                <span>Fuerza</span>
+                <div class="stat-bar">
+                  <div class="stat-fill" [style.width.%]="hero.powerstats.strength"></div>
+                </div>
+                <span>{{ hero.powerstats.strength }}</span>
+              </div>
+              <div class="stat">
+                <span>Velocidad</span>
+                <div class="stat-bar">
+                  <div class="stat-fill" [style.width.%]="hero.powerstats.speed"></div>
+                </div>
+                <span>{{ hero.powerstats.speed }}</span>
+              </div>
+              <div class="stat">
+                <span>Durabilidad</span>
+                <div class="stat-bar">
+                  <div class="stat-fill" [style.width.%]="hero.powerstats.durability"></div>
+                </div>
+                <span>{{ hero.powerstats.durability }}</span>
+              </div>
+              <div class="stat">
+                <span>Poder</span>
+                <div class="stat-bar">
+                  <div class="stat-fill" [style.width.%]="hero.powerstats.power"></div>
+                </div>
+                <span>{{ hero.powerstats.power }}</span>
+              </div>
+              <div class="stat">
+                <span>Combate</span>
+                <div class="stat-bar">
+                  <div class="stat-fill" [style.width.%]="hero.powerstats.combat"></div>
+                </div>
+                <span>{{ hero.powerstats.combat }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </mat-card>
+  }
+</div>

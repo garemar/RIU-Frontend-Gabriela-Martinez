@@ -1,63 +1,59 @@
-import { Injectable } from '@angular/core';
-import { Observable, BehaviorSubject, map, catchError, of, delay } from 'rxjs';
-import { Hero, HeroCreate } from '../models/hero.interface';
-import { HttpClient } from '@angular/common/http';
-
-
 /**
  * HeroService - Gestión de héroes
  * 
- * Implementa un sistema híbrido que consume la API pública de superhéroes
- * (https://akabab.github.io/superhero-api) y permite crear héroes personalizados
- * que se almacenan localmente en memoria.
- * 
- * Los héroes de la API son de solo lectura, mientras que los custom pueden
- * ser editados y eliminados.
+ * Carga inicial desde la API pública de superhéroes y almacena todo en memoria.
+ * Después de la carga inicial, todos los héroes (API + custom) son tratados igual
+ * y pueden ser editados o eliminados.
  */
+import { Injectable } from '@angular/core';
+import { Observable, BehaviorSubject, map, catchError, of, delay, tap } from 'rxjs';
+import { Hero, HeroCreate } from '../models/hero.interface';
+import { HttpClient } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root'
 })
 export class HeroService {
   private readonly API_URL = 'https://akabab.github.io/superhero-api/api';
-  private localHeroes: Hero[] = [];
-  private allHeroes: Hero[] = [];
+  private heroes: Hero[] = [];
   private heroesLoaded = false;
+  private heroesSubject = new BehaviorSubject<Hero[]>([]);
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) {
+    this.loadInitialHeroes();
+  }
 
-  private loadHeroesFromAPI(): Observable<Hero[]> {
-    if (this.heroesLoaded) {
-      return of([...this.allHeroes, ...this.localHeroes]);
-    }
-
-    return this.http.get<Hero[]>(`${this.API_URL}/all.json`).pipe(
-      map(heroes => {
-        this.allHeroes = heroes;
-        this.heroesLoaded = true;
-        return [...this.allHeroes, ...this.localHeroes];
-      }),
-      catchError(() => of([...this.localHeroes]))
-    );
+  private loadInitialHeroes(): void {
+    this.http.get<Hero[]>(`${this.API_URL}/all.json`).pipe(
+      catchError(() => of([]))
+    ).subscribe(heroes => {
+      this.heroes = heroes;
+      this.heroesLoaded = true;
+      this.heroesSubject.next(this.heroes);
+    });
   }
 
   getAll(): Observable<Hero[]> {
-    return this.loadHeroesFromAPI().pipe(delay(500));
+    if (this.heroesLoaded) {
+      return of(this.heroes).pipe(delay(300));
+    }
+    return this.heroesSubject.pipe(
+      map(() => this.heroes),
+      delay(300)
+    );
   }
 
   getById(id: number): Observable<Hero | undefined> {
-    return this.loadHeroesFromAPI().pipe(
-      map(heroes => heroes.find(h => h.id === id)),
-      delay(300)
+    return this.getAll().pipe(
+      map(heroes => heroes.find(h => h.id === id))
     );
   }
 
   searchByName(term: string): Observable<Hero[]> {
-    return this.loadHeroesFromAPI().pipe(
+    return this.getAll().pipe(
       map(heroes => heroes.filter(h => 
         h.name.toLowerCase().includes(term.toLowerCase())
-      )),
-      delay(300)
+      ))
     );
   }
 
@@ -66,12 +62,12 @@ export class HeroService {
       id: Date.now(),
       name: heroData.name,
       powerstats: {
-        intelligence: 0,
-        strength: 0,
-        speed: 0,
-        durability: 0,
-        power: 0,
-        combat: 0
+        intelligence: 50,
+        strength: 50,
+        speed: 50,
+        durability: 50,
+        power: 50,
+        combat: 50
       },
       biography: {
         fullName: heroData.name,
@@ -99,30 +95,33 @@ export class HeroService {
         relatives: '-'
       },
       images: {
-        xs: 'https://via.placeholder.com/32x48',
-        sm: 'https://via.placeholder.com/64x96',
-        md: 'https://via.placeholder.com/128x192',
-        lg: 'https://via.placeholder.com/256x384'
+        xs: 'https://via.placeholder.com/32x48/9c27b0/ffffff?text=Hero',
+        sm: 'https://via.placeholder.com/64x96/9c27b0/ffffff?text=Hero',
+        md: 'https://via.placeholder.com/128x192/9c27b0/ffffff?text=Hero',
+        lg: 'https://via.placeholder.com/256x384/9c27b0/ffffff?text=Hero'
       }
     };
 
-    this.localHeroes.push(newHero);
+    this.heroes.unshift(newHero);
+    this.heroesSubject.next(this.heroes);
     return of(newHero).pipe(delay(500));
   }
 
   update(id: number, heroData: Partial<Hero>): Observable<Hero | undefined> {
-    const index = this.localHeroes.findIndex(h => h.id === id);
+    const index = this.heroes.findIndex(h => h.id === id);
     if (index !== -1) {
-      this.localHeroes[index] = { ...this.localHeroes[index], ...heroData };
-      return of(this.localHeroes[index]).pipe(delay(500));
+      this.heroes[index] = { ...this.heroes[index], ...heroData };
+      this.heroesSubject.next(this.heroes);
+      return of(this.heroes[index]).pipe(delay(500));
     }
     return of(undefined).pipe(delay(500));
   }
 
   delete(id: number): Observable<boolean> {
-    const index = this.localHeroes.findIndex(h => h.id === id);
+    const index = this.heroes.findIndex(h => h.id === id);
     if (index !== -1) {
-      this.localHeroes.splice(index, 1);
+      this.heroes.splice(index, 1);
+      this.heroesSubject.next(this.heroes);
       return of(true).pipe(delay(500));
     }
     return of(false).pipe(delay(500));

@@ -14,5 +14,21 @@ $dark-theme: mat.m2-define-dark-theme((
 
 @include mat.all-component-themes($dark-theme);
 
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+html, body { 
+  height: 100%; 
+  background: linear-gradient(135deg, #0d0d0d 0%, #1a0d2e 100%);
+  background-attachment: fixed;
+  color: rgba(255, 255, 255, 0.87);
+}
+
+body { 
+  margin: 0; 
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+.custom-dialog {
+  .mat-mdc-dialog-container {
+    background-color: #424242;
+    border-radius: 12px;
+  }
+}

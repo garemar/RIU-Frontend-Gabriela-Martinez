@@ -1,0 +1,61 @@
+<div class="hero-list-container">
+  <div class="header">
+    <h1>Gestión de Súper Héroes</h1>
+    
+    <div class="filters">
+      <mat-form-field appearance="outline" class="search-field">
+        <mat-label>Buscar personaje</mat-label>
+        <input 
+          matInput 
+          [(ngModel)]="searchTerm"
+          (input)="onSearch()"
+          placeholder="Superman, Batman, Joker...">
+      </mat-form-field>
+
+      <button mat-fab color="primary" (click)="onAdd()" class="add-button" matTooltip="Agregar personaje">
+        <mat-icon>add</mat-icon>
+      </button>
+    </div>
+  </div>
+
+  @if (loading$ | async) {
+    <div class="loading-overlay">
+      <mat-spinner></mat-spinner>
+    </div>
+  }
+
+  <div class="heroes-grid">
+    @for (hero of displayedHeroes(); track hero.id) {
+      <mat-card class="hero-card" (click)="onView(hero)">
+        <div class="card-image">
+          <img [src]="hero.images.sm" [alt]="hero.name">
+        </div>
+        
+        <mat-card-content>
+          <h3>{{ hero.name }}</h3>
+          <p class="real-name">{{ hero.biography.fullName }}</p>
+          <div class="publisher">
+            <mat-icon>public</mat-icon>
+            <span>{{ hero.biography.publisher }}</span>
+          </div>
+        </mat-card-content>
+
+        <mat-card-actions>
+          <button mat-icon-button color="primary" (click)="onEdit(hero); $event.stopPropagation()" aria-label="Editar">
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button mat-icon-button color="warn" (click)="onDelete(hero); $event.stopPropagation()" aria-label="Eliminar">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </mat-card-actions>
+      </mat-card>
+    }
+  </div>
+
+  <mat-paginator
+    [length]="totalItems"
+    [pageSize]="pageSize"
+    [pageSizeOptions]="[12, 24, 48, 96]"
+    (page)="onPageChange($event)">
+  </mat-paginator>
+</div>

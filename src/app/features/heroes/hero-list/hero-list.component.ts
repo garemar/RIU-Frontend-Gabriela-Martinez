@@ -3,20 +3,23 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { MatTableModule } from '@angular/material/table';
+import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatDialogModule, MatDialog } from '@angular/material/dialog';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { HeroService } from '../../core/services/hero.service';
-import { LoadingService } from '../../core/services/loading.service';
-import { Hero } from '../../core/models/hero.interface';
+import { HeroService } from '../../../core/services/hero.service';
+import { LoadingService } from '../../../core/services/loading.service';
+import { Hero } from '../../../core/models/hero.interface';
+import { ConfirmDialogComponent } from '../../../shared/components/confirm-dialog.component';
+
 
 
 /**
- * TODO: Implementar vista de detalle del héroe en lugar de alert()
  * TODO: Agregar filtros por publisher/universo
  * TODO: Mejorar paginación para manejar grandes volúmenes (la API tiene 563 héroes)
  */
@@ -34,7 +37,9 @@ import { Hero } from '../../core/models/hero.interface';
     MatFormFieldModule,
     MatPaginatorModule,
     MatDialogModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
+    MatCardModule,
+    MatTooltipModule
   ],
   templateUrl: './hero-list.component.html',
   styleUrl: './hero-list.component.scss'
@@ -47,7 +52,7 @@ export class HeroListComponent implements OnInit {
   
   displayedColumns: string[] = ['image', 'name', 'fullName', 'publisher', 'actions'];
   
-  pageSize = 5;
+  pageSize = 12;
   pageIndex = 0;
   totalItems = 0;
 
@@ -109,7 +114,7 @@ export class HeroListComponent implements OnInit {
   }
 
   onView(hero: Hero): void {
-    alert(`Nombre: ${hero.name}\nNombre Real: ${hero.biography.fullName}\nPublisher: ${hero.biography.publisher}\nOcupación: ${hero.work.occupation}`);
+    this.router.navigate(['/heroes/detail', hero.id]);
   }
   onAdd(): void {
     this.router.navigate(['/heroes/new']);
@@ -119,15 +124,28 @@ export class HeroListComponent implements OnInit {
     this.router.navigate(['/heroes/edit', hero.id]);
   }
 
-  onDelete(hero: Hero): void {
-    if (confirm(`¿Estás seguro de eliminar a ${hero.name}?`)) {
-      this.loadingService.show();
-      this.heroService.delete(hero.id).subscribe({
-        next: () => {
-          this.loadHeroes();
-        },
-        error: () => this.loadingService.hide()
-      });
-    }
+onDelete(hero: Hero): void {
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      width: '450px',
+      panelClass: 'custom-dialog',
+      data: {
+        title: 'Confirmar Eliminación',
+        message: `¿Estás seguro de que deseas eliminar a ${hero.name}?`,
+        confirmText: 'Eliminar',
+        cancelText: 'Cancelar'
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.loadingService.show();
+        this.heroService.delete(hero.id).subscribe({
+          next: () => {
+            this.loadHeroes();
+          },
+          error: () => this.loadingService.hide()
+        });
+      }
+    });
   }
 }

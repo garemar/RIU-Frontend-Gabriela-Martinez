@@ -1,8 +1,8 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { HeroListComponent } from './hero-list.component';
-import { HeroService } from '../../core/services/hero.service';
-import { LoadingService } from '../../core/services/loading.service';
+import { HeroService } from '../../../core/services/hero.service';
+import { LoadingService } from '../../../core/services/loading.service';
 import { Router } from '@angular/router';
 import { of } from 'rxjs';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
