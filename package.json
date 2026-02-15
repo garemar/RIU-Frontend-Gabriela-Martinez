@@ -7,7 +7,8 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "test:ci": "CI=true ng test --no-watch --coverage"
+    "test:ci": "CI=true ng test --no-watch --coverage",
+    "serve:prod": "ng build --configuration production && npx http-server dist/superheros-app/browser -p 8080"
   },
   "prettier": {
     "printWidth": 100,

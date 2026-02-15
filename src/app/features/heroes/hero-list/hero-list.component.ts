@@ -20,8 +20,9 @@ import { ConfirmDialogComponent } from '../../../shared/components/confirm-dialo
 
 
 /**
- * TODO: Agregar filtros por publisher/universo
- * TODO: Mejorar paginación para manejar grandes volúmenes (la API tiene 563 héroes)
+ * TODO: Implementar filtros por publisher/universo (marvel, dc, etc)
+ * FIXME: La paginación actual funciona pero podría optimizarse con virtual scroll
+ * para manejar los 563 héroes de forma más eficiente
  */
 
 @Component({

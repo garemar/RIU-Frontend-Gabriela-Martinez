@@ -13,7 +13,7 @@ Aplicación SPA para gestión de súper héroes desarrollada con Angular 21 y Ma
 - ✅ Integración con API pública de súper héroes (563 personajes)
 - ✅ Directiva custom para transformar texto a mayúsculas
 - ✅ Interceptor de loading global
-- ✅ Tests unitarios con 83%+ coverage
+- ✅ Tests unitarios con 86%+ coverage
 - ✅ Diseño responsivo con tema oscuro
 - ✅ Dockerizado con nginx
 
@@ -53,19 +53,24 @@ La aplicación estará disponible en `http://localhost:4200`
 
 ## 📦 Scripts Disponibles
 
+### Comandos Angular CLI (Recomendado)
+
 ```bash
 # Desarrollo
-npm start              # Inicia servidor de desarrollo
-npm run watch          # Build en modo watch
+ng serve              # Inicia servidor de desarrollo
+ng build              # Compila para producción
+ng test               # Ejecuta tests en modo watch
 
-# Build
-npm run build          # Compila para producción
+# Alternativas con npm
+npm start             # Alias de ng serve
+npm run build         # Alias de ng build
+npm test              # Alias de ng test
+npm run test:ci       # Tests con coverage (CI/CD)
+```
 
-# Testing
-npm test              # Ejecuta tests en modo watch
-npm run test:ci       # Ejecuta tests con coverage (CI/CD)
+### Docker
 
-# Docker
+```bash
 docker-compose build  # Construye imagen Docker
 docker-compose up     # Inicia contenedor (puerto 8080)
 ```
@@ -138,12 +143,12 @@ src/app/
 
 ## 🧪 Testing
 
-**Coverage actual: 83.49%** ✅ (supera el objetivo de 80%)
+**Coverage actual: 86.44%** ✅
 
 Tests implementados:
 
 - ✅ HeroService - 8 tests (92.3% coverage)
-- ✅ HeroListComponent - 4 tests (75.6% coverage)
+- ✅ HeroListComponent - 4 tests (80.67% coverage)
 - ✅ UppercaseInputDirective - 1 test (100% coverage)
 - ✅ ConfirmDialogComponent - 3 tests (92.85% coverage)
 
@@ -198,6 +203,16 @@ Ver reporte detallado: `coverage/index.html` (generado después de `npm run test
 - [ ] Tests E2E con Playwright
 - [ ] PWA con service workers
 - [ ] Infinite scroll en lugar de paginación
+
+## 💭 Notas del Desarrollo
+
+Durante el desarrollo surgieron algunos desafíos interesantes:
+
+- La integración inicial con la API externa requirió manejar el timing de carga de datos
+- Decidí usar un modelo híbrido (API + memoria) para mantener la simplicidad sin backend
+- Los tests de la directiva uppercase fueron particularmente complicados por el manejo del cursor
+
+El proyecto fue desarrollado en aproximadamente 6-8 horas de trabajo distribuidas en 2 días.
 
 ## 👤 Autor
 

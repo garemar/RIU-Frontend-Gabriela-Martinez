@@ -57,7 +57,9 @@ export class HeroService {
     );
   }
 
+// Crear nuevo héroe con valores por defecto
 create(heroData: HeroCreate): Observable<Hero> {
+    // Usar imagen personalizada o placeholder
     const imageUrl = heroData.imageUrl || 'https://via.placeholder.com/256x384/9c27b0/ffffff?text=Hero';
     
     const newHero: Hero = {

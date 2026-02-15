@@ -16,7 +16,6 @@ export class UppercaseInputDirective {
 
     const upper = input.value.toUpperCase();
 
-    // 🔒 Guarda anti-loop
     if (input.value !== upper) {
       input.value = upper;
 
